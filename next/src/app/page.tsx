@@ -15,10 +15,16 @@ export default function Home() {
 
   const debouncedQuery = useDebounce(query, 200);
 
+  const contextSuggestions = [
+    { display: "MohammadHelal", id: "MohammadHelal" },
+    { display: "Feras", id: "Feras" },
+  ]; 
+  
   const autocompleteSuggestionsQuery = useQuery<mentionsData>({
     queryKey: ["user-mentions", debouncedQuery],
     queryFn: async () => {
-      if (!query) return [];
+      if (!query)
+        return contextSuggestions
       const res = await (
         await fetch(`https://api.github.com/search/users?q=${debouncedQuery}`, {
           headers: {
@@ -39,10 +45,15 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full">
+      <div className="z-10 w-full flex flex-col gap-5">
+        <h1 className="border-black border-2 rounded-lg p-4">
+          This is a post with Feras And Mohammad Helal. They will instantly
+          appear as client side contextual suggestions.
+        </h1>
+        <h1>You can also mention users from github by their github username</h1>
         {autocompleteSuggestionsQuery.isError ? <h1>Error</h1> : <h1></h1>}
         <MentionsInput
-          className="border-black border-2 rounded-lg"
+          className="border-black border-2 rounded-lg p-4"
           value={text}
           onChange={(event, newValue, plainText, mentions) => {
             setMentions(mentions);
@@ -71,14 +82,32 @@ export default function Home() {
             }}
             appendSpaceOnAdd={true}
             isLoading={autocompleteSuggestionsQuery.isFetching}
+            renderSuggestion={(
+              suggestion,
+              search,
+              highlight,
+              index,
+              focused
+            ) => {
+              return (
+                <>
+                  <h1
+                    className={`p-2 ${focused ? "border-black border-2" : ""}`}
+                  >
+                    {suggestion.display}
+                  </h1>
+                </>
+              );
+            }}
           />
         </MentionsInput>
       </div>
-      <h1>You have mentioned {mentions.length} people </h1>
-      {mentions.map(({ display }) => (
-        <h1>{display}</h1>
-      ))}
+      <div className="flex flex-col gap-5">
+        <h1>You have mentioned {mentions.length} people </h1>
+        {mentions.map(({ display }) => (
+          <h1>{display}</h1>
+        ))}
+      </div>
     </main>
   );
 }
-
