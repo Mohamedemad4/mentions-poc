@@ -4,9 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
 import { Mention, MentionsInput } from "react-mentions";
 
-const PAT =
-  "";
-
+const PAT = "";
 type mentionsData = { display: string; id: string }[];
 export default function Home() {
   const [text, setText] = useState("");
@@ -18,13 +16,12 @@ export default function Home() {
   const contextSuggestions = [
     { display: "MohammadHelal", id: "MohammadHelal" },
     { display: "Feras", id: "Feras" },
-  ]; 
-  
+  ];
+
   const autocompleteSuggestionsQuery = useQuery<mentionsData>({
     queryKey: ["user-mentions", debouncedQuery],
     queryFn: async () => {
-      if (!query)
-        return contextSuggestions
+      if (!query) return contextSuggestions;
       const res = await (
         await fetch(`https://api.github.com/search/users?q=${debouncedQuery}`, {
           headers: {
@@ -53,7 +50,7 @@ export default function Home() {
         <h1>You can also mention users from github by their github username</h1>
         {autocompleteSuggestionsQuery.isError ? <h1>Error</h1> : <h1></h1>}
         <MentionsInput
-          className="border-black border-2 rounded-lg p-4"
+          className="border-black border-2 rounded-lg"
           value={text}
           onChange={(event, newValue, plainText, mentions) => {
             setMentions(mentions);
@@ -82,6 +79,9 @@ export default function Home() {
             }}
             appendSpaceOnAdd={true}
             isLoading={autocompleteSuggestionsQuery.isFetching}
+            style={{
+              backgroundColor: "#fff",
+            }}
             renderSuggestion={(
               suggestion,
               search,
