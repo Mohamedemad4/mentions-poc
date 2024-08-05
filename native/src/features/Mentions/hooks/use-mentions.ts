@@ -108,7 +108,6 @@ const useMentions = <TriggerName extends string>({
   return {
     triggers,
     textInputProps,
-
     mentionState,
   };
 };
